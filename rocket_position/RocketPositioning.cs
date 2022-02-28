@@ -1,4 +1,6 @@
-﻿namespace rocket_position
+﻿using static rocket_position.Helper;
+
+namespace rocket_position
 {
     public class RocketPositioning
     {
@@ -26,44 +28,44 @@
             _platformArea.Yend = _platformArea.Ystart + platformSize;
         }
 
-        public string checkLandingPlatform(int X, int Y)
+        public ePositionStatus CheckLandingPlatform(int X, int Y)
         {
             if (IsOnPlatform(X, Y)) 
             {
                 foreach (var landedCoord in _landedRocketsCoordinates)
                 {
-                    var landedCoordCollisionMatrix = rebuildCollisionMatrix(landedCoord.X, landedCoord.Y);
+                    var landedCoordCollisionMatrix = RebuildCollisionMatrix(landedCoord.X, landedCoord.Y);
                     if (IsColliding(landedCoordCollisionMatrix,X,Y))
                     {
-                        return "clash";
+                        return ePositionStatus.Clash;
                     }
                 }
                 _landedRocketsCoordinates.Add((X, Y));
-                return "ok for landing"; 
+                return ePositionStatus.OkForLanding; 
             }
 
 
             if (_lastCollistionCoordinates.X == -1 && _lastCollistionCoordinates.Y == -1)
             {
-                resetLastCollision(X, Y);
-                return "out of platform";
+                ResetLastCollision(X, Y);
+                return ePositionStatus.OutOfPlatform;
             }
 
-            var collisionMatrix = rebuildCollisionMatrix(_lastCollistionCoordinates.X, _lastCollistionCoordinates.Y);
+            var collisionMatrix = RebuildCollisionMatrix(_lastCollistionCoordinates.X, _lastCollistionCoordinates.Y);
             if (IsColliding(collisionMatrix,X,Y)) 
             {
-                resetLastCollision(X, Y);
-                return "clash"; 
+                ResetLastCollision(X, Y);
+                return ePositionStatus.Clash; 
             };
 
 
-            resetLastCollision(X,Y);
-            return "out of platform";
+            ResetLastCollision(X,Y);
+            return ePositionStatus.OutOfPlatform;
 
         }
 
 
-        private void resetLastCollision(int X, int Y)
+        private void ResetLastCollision(int X, int Y)
         {
             _lastCollistionCoordinates.X = X;
             _lastCollistionCoordinates.Y = Y;
@@ -74,7 +76,7 @@
             return  X >= _platformArea.Xstart && X <=_platformArea.Xend  && Y >= _platformArea.Ystart  && Y <= _platformArea.Yend;
         }
 
-        private List<(int X, int Y)> rebuildCollisionMatrix(int X, int Y)
+        private List<(int X, int Y)> RebuildCollisionMatrix(int X, int Y)
         {
             var _collistionCoordinates = new List<(int X, int Y)>();
             _collistionCoordinates.Add((X, Y));

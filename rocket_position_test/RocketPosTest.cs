@@ -1,6 +1,7 @@
 using rocket_position;
 using System;
 using Xunit;
+using static rocket_position.Helper;
 
 namespace rocket_position_test
 {
@@ -42,8 +43,8 @@ namespace rocket_position_test
         public void checkLandingPositionOutOfPlatformShouldPass(int X, int Y)
         {
 
-            var result = _rocketPos.checkLandingPlatform(X, Y);
-            Assert.Equal("out of platform", result);
+            var result = _rocketPos.CheckLandingPlatform(X, Y);
+            Assert.Equal(ePositionStatus.OutOfPlatform, result);
         }
 
         [Theory]
@@ -54,8 +55,8 @@ namespace rocket_position_test
         [InlineData(10, 10)]
         public void checkLandingInPlatformShouldPass(int X, int Y)
         {
-            var result = _rocketPos.checkLandingPlatform(X, Y);
-            Assert.Equal("ok for landing", result);
+            var result = _rocketPos.CheckLandingPlatform(X, Y);
+            Assert.Equal(ePositionStatus.OkForLanding, result);
         }
 
 
@@ -64,9 +65,9 @@ namespace rocket_position_test
         [InlineData(60, 60)]
         public void checkLandingOutsidePlatformWithFixedCollisionShouldPass(int X, int Y)
         {
-            Assert.Equal("out of platform", _rocketPos.checkLandingPlatform(X, Y));
-            Assert.Equal("clash", _rocketPos.checkLandingPlatform(X, Y));
-            Assert.Equal("clash", _rocketPos.checkLandingPlatform(X, Y));
+            Assert.Equal(ePositionStatus.OutOfPlatform, _rocketPos.CheckLandingPlatform(X, Y));
+            Assert.Equal(ePositionStatus.Clash, _rocketPos.CheckLandingPlatform(X, Y));
+            Assert.Equal(ePositionStatus.Clash, _rocketPos.CheckLandingPlatform(X, Y));
         }
 
         [Theory]
@@ -81,18 +82,18 @@ namespace rocket_position_test
         [InlineData(49, 51)]
         public void checkLandingWithFixedCollisionLocationWithinOneBlockShouldPass(int X, int Y)
         {
-            Assert.Equal("out of platform", _rocketPos.checkLandingPlatform(50, 50));
-            Assert.Equal("clash", _rocketPos.checkLandingPlatform(X, Y));
+            Assert.Equal(ePositionStatus.OutOfPlatform, _rocketPos.CheckLandingPlatform(50, 50));
+            Assert.Equal(ePositionStatus.Clash, _rocketPos.CheckLandingPlatform(X, Y));
         }
 
         [Fact]
         public void checkLandingInPlatformMulipleRocketsShouldPass()
         {
-            Assert.Equal("ok for landing", _rocketPos.checkLandingPlatform(10, 10));
-            Assert.Equal("ok for landing", _rocketPos.checkLandingPlatform(5, 5));
-            Assert.Equal("ok for landing", _rocketPos.checkLandingPlatform(15, 15));
-            Assert.Equal("out of platform", _rocketPos.checkLandingPlatform(20, 20));
-            Assert.Equal("out of platform", _rocketPos.checkLandingPlatform(0, 0));
+            Assert.Equal(ePositionStatus.OkForLanding, _rocketPos.CheckLandingPlatform(10, 10));
+            Assert.Equal(ePositionStatus.OkForLanding, _rocketPos.CheckLandingPlatform(5, 5));
+            Assert.Equal(ePositionStatus.OkForLanding, _rocketPos.CheckLandingPlatform(15, 15));
+            Assert.Equal(ePositionStatus.OutOfPlatform, _rocketPos.CheckLandingPlatform(20, 20));
+            Assert.Equal(ePositionStatus.OutOfPlatform, _rocketPos.CheckLandingPlatform(0, 0));
             Assert.Equal(3, _rocketPos.LandedRocketsCoordinates.Count);
         }
 
@@ -108,8 +109,8 @@ namespace rocket_position_test
         [InlineData(9, 11)]
         public void checkLandingInPlatformMultipleRocketsWithCollisionShouldPass(int X, int Y)
         {
-            Assert.Equal("ok for landing", _rocketPos.checkLandingPlatform(10, 10));
-            Assert.Equal("clash", _rocketPos.checkLandingPlatform(X, Y));
+            Assert.Equal(ePositionStatus.OkForLanding, _rocketPos.CheckLandingPlatform(10, 10));
+            Assert.Equal(ePositionStatus.Clash, _rocketPos.CheckLandingPlatform(X, Y));
         }
 
 
@@ -118,14 +119,14 @@ namespace rocket_position_test
         {
             var rocketPos = new RocketPositioning(platformSize:50);
 
-            Assert.Equal("ok for landing", rocketPos.checkLandingPlatform(20,9));
-            Assert.Equal("ok for landing", rocketPos.checkLandingPlatform(30, 40));
-            Assert.Equal("ok for landing", rocketPos.checkLandingPlatform(50, 50));
-            Assert.Equal("ok for landing", rocketPos.checkLandingPlatform(9, 40));
-            Assert.Equal("out of platform", rocketPos.checkLandingPlatform(60, 60));
-            Assert.Equal("out of platform", rocketPos.checkLandingPlatform(70, 9));
-            Assert.Equal("out of platform", rocketPos.checkLandingPlatform(0, 0));
-            Assert.Equal("clash", rocketPos.checkLandingPlatform(0, 0));
+            Assert.Equal(ePositionStatus.OkForLanding, rocketPos.CheckLandingPlatform(20,9));
+            Assert.Equal(ePositionStatus.OkForLanding, rocketPos.CheckLandingPlatform(30, 40));
+            Assert.Equal(ePositionStatus.OkForLanding, rocketPos.CheckLandingPlatform(50, 50));
+            Assert.Equal(ePositionStatus.OkForLanding, rocketPos.CheckLandingPlatform(9, 40));
+            Assert.Equal(ePositionStatus.OutOfPlatform, rocketPos.CheckLandingPlatform(60, 60));
+            Assert.Equal(ePositionStatus.OutOfPlatform, rocketPos.CheckLandingPlatform(70, 9));
+            Assert.Equal(ePositionStatus.OutOfPlatform, rocketPos.CheckLandingPlatform(0, 0));
+            Assert.Equal(ePositionStatus.Clash, rocketPos.CheckLandingPlatform(0, 0));
             Assert.Equal(4, rocketPos.LandedRocketsCoordinates.Count);
         }
     }
